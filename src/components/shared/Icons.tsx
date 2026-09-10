@@ -81,3 +81,67 @@ export const IconStar = (p: IconProps) => (
     <path d="M12 2l1.5 8.5L22 12l-8.5 1.5L12 22l-1.5-8.5L2 12l8.5-1.5z" />
   </Svg>
 );
+
+export const IconGlobe = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18" />
+  </Svg>
+);
+
+export const IconUser = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="8" r="3.5" />
+    <path d="M5 20c0-3.5 3.1-6 7-6s7 2.5 7 6" />
+  </Svg>
+);
+
+export const IconCard = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="3" y="5" width="18" height="14" rx="2" />
+    <path d="M3 10h18M7 15h4" />
+  </Svg>
+);
+
+export const IconHandshake = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M11 6 8 9a2 2 0 0 0 0 3l3 3 2-2 2 2 1-1" />
+    <path d="M13 6l3-1 5 4M3 9l4-4 4 1M3 9l3 5M21 9l-3 5" />
+  </Svg>
+);
+
+export const IconBuilding = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="5" y="3" width="14" height="18" rx="1" />
+    <path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2M10 21v-3h4v3" />
+  </Svg>
+);
+
+export const IconNodes = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="6" r="2.5" />
+    <circle cx="6" cy="17" r="2.5" />
+    <circle cx="18" cy="17" r="2.5" />
+    <path d="M11 8 7.5 15M13 8l3.5 7M8.5 17h7" />
+  </Svg>
+);
+
+export const IconArrowRight = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4 12h16M14 6l6 6-6 6" />
+  </Svg>
+);
+
+export const IconLock = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="5" y="11" width="14" height="9" rx="2" />
+    <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+  </Svg>
+);
+
+export const IconEye = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" />
+    <circle cx="12" cy="12" r="3" />
+  </Svg>
+);
