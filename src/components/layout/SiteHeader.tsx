@@ -1,6 +1,6 @@
 import { Container } from "@/components/ui/Container";
-import { Button } from "@/components/ui/Button";
 import { Wordmark } from "@/components/shared/Wordmark";
+import { AuthNav } from "@/features/auth/components/AuthNav";
 import { publicNav } from "@/lib/constants/navigation";
 
 /** Public site header: wordmark, primary navigation, and the portal entry point. */
@@ -23,9 +23,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Button href="/login" variant="outline" size="sm">
-            Employee Login
-          </Button>
+          <AuthNav />
         </div>
       </Container>
     </header>
