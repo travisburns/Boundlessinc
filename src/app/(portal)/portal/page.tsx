@@ -10,6 +10,8 @@ const liveModules = new Set([
   "/portal/onboarding",
   "/portal/payments",
   "/portal/documents",
+  "/portal/intelligence",
+  "/portal/integrations",
 ]);
 
 export default function PortalDashboard() {
