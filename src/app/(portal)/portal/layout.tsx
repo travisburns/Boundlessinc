@@ -1,13 +1,18 @@
 import { RequireAuth } from "@/features/auth/components/RequireAuth";
+import { ActiveCompanyProvider } from "@/features/portal/context/ActiveCompanyProvider";
+import { PortalShell } from "@/features/portal/components/PortalShell";
 
-/**
- * Enterprise portal shell. Phase 1 provides the authentication guard; the full
- * portal navigation and capability modules arrive in later phases.
- */
+/** Enterprise portal shell: authentication guard, company context, and chrome. */
 export default function PortalLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <RequireAuth>{children}</RequireAuth>;
+  return (
+    <RequireAuth>
+      <ActiveCompanyProvider>
+        <PortalShell>{children}</PortalShell>
+      </ActiveCompanyProvider>
+    </RequireAuth>
+  );
 }
