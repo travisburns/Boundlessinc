@@ -31,9 +31,11 @@
   --color-warning: #fbbf24;
   --color-danger: #f87171;
 
-  /* Typography */
-  --font-display: "Iowan Old Style", "Palatino Linotype", "Book Antiqua",
-    Palatino, Georgia, "Times New Roman", serif;
+  /* Typography — engraved caps (Cinzel) for the wordmark, Cormorant serif for
+     headings/editorial, system sans for dense UI. */
+  --font-display: var(--font-cinzel), "Trajan Pro", "Times New Roman", serif;
+  --font-serif: var(--font-cormorant), "Iowan Old Style", Georgia,
+    "Times New Roman", serif;
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono",
@@ -63,6 +65,7 @@
   --color-danger: var(--color-danger);
 
   --font-display: var(--font-display);
+  --font-serif: var(--font-serif);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
 
@@ -99,4 +102,46 @@ body {
 
 .text-balance {
   text-wrap: balance;
+}
+
+/* Wide-tracked engraved uppercase — the wordmark and section eyebrows */
+.font-display {
+  font-family: var(--font-display);
+}
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+/* Marginal micro-labels used down the sides of cosmic bands */
+.u-micro {
+  font-size: 0.58rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  line-height: 2.4;
+  color: var(--color-text-faint);
+}
+
+/*
+  Deep-space scene used behind the hero and closing bands. Layers a tiled star
+  texture (harvested from the design) under a violet nebula glow and a warm
+  Earth-horizon sunrise at the bottom, over near-black space.
+*/
+.bg-cosmos {
+  background-color: var(--color-void);
+  background-image:
+    radial-gradient(120% 80% at 50% 120%, color-mix(in srgb, var(--color-gold) 26%, transparent), transparent 60%),
+    radial-gradient(90% 60% at 50% 118%, color-mix(in srgb, var(--color-gold-soft) 22%, transparent), transparent 55%),
+    radial-gradient(70% 55% at 50% -8%, color-mix(in srgb, var(--color-cosmic) 24%, transparent), transparent 60%),
+    url("/images/corporate/starfield.png"),
+    linear-gradient(to bottom, #05060a, #080a12 55%, #05060a);
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat, no-repeat;
+  background-size: cover, cover, cover, 360px 340px, cover;
+  background-blend-mode: screen, screen, screen, soft-light, normal;
+}
+
+/* A thin gold hairline used as a section rule / eyebrow underline */
+.rule-gold {
+  height: 1px;
+  width: 2.5rem;
+  background: color-mix(in srgb, var(--color-gold) 70%, transparent);
 }
