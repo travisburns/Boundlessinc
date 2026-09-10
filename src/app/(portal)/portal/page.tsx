@@ -5,7 +5,7 @@ import { useAuth } from "@/features/auth/components/AuthProvider";
 import { useActiveCompany } from "@/features/portal/context/ActiveCompanyProvider";
 import { portalNav } from "@/lib/constants/navigation";
 
-const liveModules = new Set(["/portal/employees", "/portal/onboarding"]);
+const liveModules = new Set(["/portal/employees", "/portal/onboarding", "/portal/payments"]);
 
 export default function PortalDashboard() {
   const { user } = useAuth();
