@@ -23,7 +23,9 @@ export const companyActionLabels = {
 /** Enterprise portal navigation (behind authentication). */
 export const portalNav: NavItem[] = [
   { label: "Overview", href: "/portal" },
+  { label: "My Ring", href: "/ring" },
   { label: "Companies", href: "/portal/companies" },
+  { label: "Rings", href: "/portal/rings" },
   { label: "Employees", href: "/portal/employees" },
   { label: "Onboarding", href: "/portal/onboarding" },
   { label: "Payments", href: "/portal/payments" },
