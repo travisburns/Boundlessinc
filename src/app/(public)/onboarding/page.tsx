@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { MicroColumn } from "@/components/shared/MicroColumn";
@@ -46,6 +47,12 @@ export default function OnboardingPage() {
             Have an invitation code? Enter it to begin.
           </p>
           <InviteCodeEntry />
+          <p className="mt-6 text-sm text-[var(--color-text-muted)]">
+            No code yet?{" "}
+            <Link href="/onboarding/request" className="text-[var(--color-gold)] hover:underline">
+              Request onboarding →
+            </Link>
+          </p>
         </Container>
       </section>
 
