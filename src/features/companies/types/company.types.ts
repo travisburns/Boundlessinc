@@ -26,3 +26,23 @@ export interface CompanyDetail extends CompanySummary {
   supportsEmployeeLogin: boolean;
   supportsPayments: boolean;
 }
+
+/** Payload for creating/updating a company (mirrors the backend CompanyBody). */
+export interface CompanyInput {
+  name: string;
+  slug?: string | null;
+  code?: string | null;
+  type: CompanyType;
+  status: CompanyStatus;
+  tagline?: string | null;
+  description?: string | null;
+  sector?: string | null;
+  accentColor?: string | null;
+  websiteUrl?: string | null;
+  domain?: string | null;
+  contactEmail?: string | null;
+  contactPhone?: string | null;
+  supportsEmployeeLogin: boolean;
+  supportsPayments: boolean;
+  sortOrder: number;
+}
