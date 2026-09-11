@@ -115,6 +115,40 @@ export interface RingHolderInviteCreated {
   expiresAtUtc: string;
 }
 
+export interface RingOverviewRow {
+  domain: string;
+  slug: string;
+  name: string;
+  holderName: string;
+  held: boolean;
+  accentColor?: string | null;
+  activeAssignments: number;
+  inReview: number;
+  blocked: number;
+}
+
+export interface OrgCompanyRow {
+  name: string;
+  status: string;
+  type: string;
+}
+
+export interface OrgTotals {
+  totalRings: number;
+  heldRings: number;
+  activeAssignments: number;
+  inReview: number;
+  blocked: number;
+  companies: number;
+}
+
+export interface OrgOverview {
+  totals: OrgTotals;
+  rings: RingOverviewRow[];
+  companies: OrgCompanyRow[];
+  recentActivity: RingActivity[];
+}
+
 export type RingFileKind = "Other" | "Audio" | "Image" | "Video" | "Document" | "Archive" | "Project";
 
 export interface RingFile {

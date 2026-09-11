@@ -6,6 +6,7 @@ import type {
   AssignmentInput,
   AssignmentStatus,
   AssignmentSummary,
+  OrgOverview,
   Ring,
   RingActivity,
   RingEvent,
@@ -74,6 +75,10 @@ export const workApi = {
     },
 
     remove: (id: string) => api.delete<void>(`/api/ring-files/${id}`, { token: token() }),
+  },
+
+  org: {
+    overview: () => api.get<OrgOverview>("/api/org/overview", authed()),
   },
 
   /** Public: ring-holder onboarding. */
