@@ -7,6 +7,7 @@ import { employeesApi } from "@/features/employees/api/employees.api";
 import type { Employee } from "@/features/employees/types/employee.types";
 import { onboardingApi } from "@/features/onboarding/api/onboarding.api";
 import { OnboardingProcessCard } from "@/features/onboarding/components/OnboardingProcessCard";
+import { InviteNewHire } from "@/features/onboarding/components/InviteNewHire";
 import type {
   OnboardingProcess,
   OnboardingTemplate,
@@ -86,10 +87,18 @@ export function OnboardingView() {
         <p className="mt-8 text-sm text-[var(--color-danger)]">{error}</p>
       ) : (
         <>
-          {/* Start */}
+          {/* Self-serve invite (new hire redeems a code and onboards themselves) */}
+          {activeCompanyId && (
+            <InviteNewHire companyId={activeCompanyId} templates={templates} />
+          )}
+
+          {/* Start onboarding for an existing employee */}
+          <h2 className="mt-10 text-sm font-semibold uppercase tracking-wider text-[var(--color-text-faint)]">
+            Start for an existing employee
+          </h2>
           <form
             onSubmit={start}
-            className="mt-8 flex flex-wrap items-end gap-3 rounded-[var(--radius)] border border-[var(--color-line)] bg-[var(--color-surface)] p-5"
+            className="mt-4 flex flex-wrap items-end gap-3 rounded-[var(--radius)] border border-[var(--color-line)] bg-[var(--color-surface)] p-5"
           >
             <Field label="Employee">
               <Select value={employeeId} onChange={setEmployeeId} placeholder="Select employee">

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { MicroColumn } from "@/components/shared/MicroColumn";
+import { InviteCodeEntry } from "@/features/onboarding/components/InviteCodeEntry";
 import {
   IconUser,
   IconCard,
@@ -41,6 +42,10 @@ export default function OnboardingPage() {
           <p className="mt-5 max-w-xl font-serif text-xl text-[var(--color-text-muted)]">
             A guided welcome into your company — shared foundations, tailored to where you&apos;re headed.
           </p>
+          <p className="mt-8 text-sm text-[var(--color-text-muted)]">
+            Have an invitation code? Enter it to begin.
+          </p>
+          <InviteCodeEntry />
         </Container>
       </section>
 
@@ -51,9 +56,9 @@ export default function OnboardingPage() {
           <p className="mt-4 max-w-2xl leading-relaxed text-[var(--color-text-muted)]">
             Onboarding at Boundless Enterprises runs on a reusable engine: every company
             shares the same reliable process, while each one — Firefin, Boundless,
-            SkaffaldOS, and the rest — tailors the steps to its work. Your company sets you
-            up with an account, then your onboarding begins here in the portal, tracked step
-            by step through to manager approval.
+            SkaffaldOS, and the rest — tailors the steps to its work. When you&apos;re hired,
+            your company sends you an invitation code. Enter it above to set up your own
+            record and walk through onboarding yourself, step by step, through to completion.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {steps.map(({ Icon, title, body }, i) => (
@@ -74,11 +79,11 @@ export default function OnboardingPage() {
       <section className="bg-cosmos relative overflow-hidden">
         <Container className="relative flex flex-col items-center py-20 text-center">
           <h2 className="font-serif text-3xl text-[var(--color-text)] sm:text-4xl">
-            Already have an account?
+            Already onboarded?
           </h2>
           <p className="mt-3 max-w-lg text-[var(--color-text-muted)]">
-            Once your company has added you, sign in to begin and track your onboarding.
-            New hire without access yet? Reach out and we&apos;ll get you set up.
+            Once you&apos;ve finished onboarding, sign in to reach your companies, tools, and
+            resources. Didn&apos;t get an invitation code? Reach out and we&apos;ll get you set up.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Button href="/login" size="lg">Employee Login</Button>
