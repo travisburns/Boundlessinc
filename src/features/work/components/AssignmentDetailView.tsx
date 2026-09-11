@@ -3,10 +3,13 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { workApi } from "@/features/work/api/work.api";
+import { RingFileManager } from "@/features/work/components/RingFileManager";
 import { STATUS_LABEL, statusColor, priorityColor, formatDate, relativeTime } from "@/features/work/workFormat";
-import type { Assignment, AssignmentStatus } from "@/features/work/types/work.types";
+import type { Assignment, AssignmentStatus, Ring } from "@/features/work/types/work.types";
 
-export function AssignmentDetailView({ slug, code, accent = "#C2410C" }: { slug: string; code: string; accent?: string }) {
+export function AssignmentDetailView({ ring, code }: { ring: Ring; code: string }) {
+  const slug = ring.slug;
+  const accent = ring.accentColor || "#C2410C";
   const [a, setA] = useState<Assignment | null>(null);
   const [loading, setLoading] = useState(true);
   const [note, setNote] = useState("");
@@ -146,6 +149,11 @@ export function AssignmentDetailView({ slug, code, accent = "#C2410C" }: { slug:
             ))}
           </ul>
         )}
+      </Section>
+
+      {/* Submit Work */}
+      <Section title="Submit Work">
+        <RingFileManager ring={ring} assignmentId={a.id} compact />
       </Section>
 
       {/* Actions */}

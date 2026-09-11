@@ -115,6 +115,20 @@ export interface RingHolderInviteCreated {
   expiresAtUtc: string;
 }
 
+export type RingFileKind = "Other" | "Audio" | "Image" | "Video" | "Document" | "Archive" | "Project";
+
+export interface RingFile {
+  id: string;
+  ringId: string;
+  assignmentId?: string | null;
+  fileName: string;
+  contentType: string;
+  sizeBytes: number;
+  kind: RingFileKind;
+  uploadedBy: string;
+  createdAtUtc: string;
+}
+
 export interface RingHolderInvite {
   ringName: string;
   ringSlug: string;

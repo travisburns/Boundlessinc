@@ -10,9 +10,7 @@ export default function AssignmentPage({ params }: { params: Promise<{ slug: str
     <RingLoader
       slug={slug}
       active="assignments"
-      render={(ring) => (
-        <AssignmentDetailView slug={slug} code={code} accent={ring.accentColor || "#C2410C"} />
-      )}
+      render={(ring) => <AssignmentDetailView ring={ring} code={code} />}
     />
   );
 }
