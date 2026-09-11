@@ -8,6 +8,7 @@ import type { Employee } from "@/features/employees/types/employee.types";
 import { onboardingApi } from "@/features/onboarding/api/onboarding.api";
 import { OnboardingProcessCard } from "@/features/onboarding/components/OnboardingProcessCard";
 import { InviteNewHire } from "@/features/onboarding/components/InviteNewHire";
+import { PendingRequests } from "@/features/onboarding/components/PendingRequests";
 import type {
   OnboardingProcess,
   OnboardingTemplate,
@@ -87,6 +88,11 @@ export function OnboardingView() {
         <p className="mt-8 text-sm text-[var(--color-danger)]">{error}</p>
       ) : (
         <>
+          {/* Pending onboarding requests awaiting approval */}
+          {activeCompanyId && (
+            <PendingRequests companyId={activeCompanyId} templates={templates} />
+          )}
+
           {/* Self-serve invite (new hire redeems a code and onboards themselves) */}
           {activeCompanyId && (
             <InviteNewHire companyId={activeCompanyId} templates={templates} />
