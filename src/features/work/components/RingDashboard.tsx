@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import {
   IconDoc, IconCheckCircle, IconHourglass, IconAlert, IconWaveform, IconBook, IconGlobe, IconTools,
@@ -61,8 +62,13 @@ export function RingDashboard({ ring }: { ring: Ring }) {
     });
   }, [active]);
 
-  const shown =
+  const q = (useSearchParams().get("q") ?? "").trim().toLowerCase();
+  const base =
     tab === "Active" ? active : tab === "InProgress" ? inProgress : tab === "Review" ? inReview : completed;
+  const shown = q
+    ? items.filter((a) =>
+        `${a.code} ${a.title} ${a.summary ?? ""}`.toLowerCase().includes(q))
+    : base;
 
   const firstName = ring.holderName.split(" ")[0];
 
@@ -164,7 +170,7 @@ export function RingDashboard({ ring }: { ring: Ring }) {
                 {ring.resources.map((r) => {
                   const Icon = resourceIcon(r.label);
                   return (
-                    <a key={r.label} href={r.href || "#"} className="flex items-center justify-between gap-2 rounded-lg border border-[var(--color-line)] bg-[var(--color-void)]/30 p-4 transition-colors hover:border-[var(--color-gold)]/50">
+                    <a key={r.label} href={r.href || `/ring/${ring.slug}/references`} className="flex items-center justify-between gap-2 rounded-lg border border-[var(--color-line)] bg-[var(--color-void)]/30 p-4 transition-colors hover:border-[var(--color-gold)]/50">
                       <span className="flex items-center gap-3">
                         <Icon size={20} style={{ color: accent }} />
                         <span>
@@ -216,7 +222,7 @@ export function RingDashboard({ ring }: { ring: Ring }) {
           <div className="rounded-[var(--radius)] border border-[var(--color-line)] bg-[var(--color-surface)] p-5">
             <div className="flex items-center justify-between">
               <h3 className="font-[family-name:var(--font-cormorant)] text-xl text-[var(--color-text)]">My Calendar</h3>
-              <span className="text-xs text-[var(--color-text-faint)]">View All</span>
+              <Link href={`/ring/${ring.slug}/calendar`} className="text-xs text-[var(--color-gold)] hover:underline">View All</Link>
             </div>
             <ul className="mt-4 space-y-3">
               {events.length === 0 && <li className="text-sm text-[var(--color-text-muted)]">Nothing scheduled.</li>}
