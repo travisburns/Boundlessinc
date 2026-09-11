@@ -104,7 +104,7 @@ export function LoginForm() {
 
       <p className="text-center text-sm text-[var(--color-text-muted)]">
         New employee?{" "}
-        <Link href="/portal" className="text-[var(--color-gold)] hover:underline">
+        <Link href="/onboarding" className="text-[var(--color-gold)] hover:underline">
           Start your onboarding →
         </Link>
       </p>
