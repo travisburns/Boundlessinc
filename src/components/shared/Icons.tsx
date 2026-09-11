@@ -1,8 +1,8 @@
 /** Thin line icons (24×24, currentColor stroke) matching the engraved brand feel. */
 
-type IconProps = { size?: number; className?: string };
+export type IconProps = { size?: number; className?: string; style?: React.CSSProperties };
 
-function Svg({ size = 24, className, children }: IconProps & { children: React.ReactNode }) {
+function Svg({ size = 24, className, style, children }: IconProps & { children: React.ReactNode }) {
   return (
     <svg
       width={size}
@@ -14,6 +14,7 @@ function Svg({ size = 24, className, children }: IconProps & { children: React.R
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
+      style={style}
       aria-hidden
     >
       {children}
@@ -37,6 +38,111 @@ export const IconKey = (p: IconProps) => (
 export const IconCheck = (p: IconProps) => (
   <Svg {...p}>
     <path d="M4 12.5 9 17.5 20 6.5" />
+  </Svg>
+);
+
+export const IconDoc = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M6 3h8l4 4v14H6z" />
+    <path d="M14 3v4h4M9 12h6M9 16h6" />
+  </Svg>
+);
+
+export const IconClipboard = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="6" y="4" width="12" height="17" rx="2" />
+    <path d="M9 4a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 4v1H9zM9 11h6M9 15h4" />
+  </Svg>
+);
+
+export const IconCheckCircle = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M8 12.5 11 15.5 16 9" />
+  </Svg>
+);
+
+export const IconAlert = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 7.5v5.5M12 16.2v.3" />
+  </Svg>
+);
+
+export const IconCalendar = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="4" y="5" width="16" height="16" rx="2" />
+    <path d="M4 9h16M8 3v4M16 3v4" />
+  </Svg>
+);
+
+export const IconFolder = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
+  </Svg>
+);
+
+export const IconBook = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M5 4h9a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H5z" />
+    <path d="M17 7a3 3 0 0 1 3-3v14" />
+  </Svg>
+);
+
+export const IconUpload = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M12 16V5M8 9l4-4 4 4M5 19h14" />
+  </Svg>
+);
+
+export const IconChat = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-4 4v-4H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z" />
+  </Svg>
+);
+
+export const IconWaveform = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4 12h2l1.5-5 2.5 12 2.5-9 2 6 1.5-4h2" />
+  </Svg>
+);
+
+export const IconTools = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M14.5 5.5a3.5 3.5 0 0 0 4.5 4.5L21 12l-9 9-2-2 9-9M6.5 6.5 4 4l2-2 2.5 2.5M4 20l5-5" />
+  </Svg>
+);
+
+export const IconEdit = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M14 4l6 6M4 20l1-4L16 5l3 3L8 19z" />
+  </Svg>
+);
+
+export const IconFileText = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M7 3h7l4 4v14H7z" />
+    <path d="M14 3v4h4M10 12h5M10 16h5" />
+  </Svg>
+);
+
+export const IconSearch = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="11" cy="11" r="6" />
+    <path d="M20 20l-4-4" />
+  </Svg>
+);
+
+export const IconBell = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6M10 20a2 2 0 0 0 4 0" />
+  </Svg>
+);
+
+export const IconRing = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="8" />
+    <circle cx="12" cy="12" r="3" />
   </Svg>
 );
 
