@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import type { UserProfile } from "@/features/auth/types/auth.types";
+import type { AuthResult, UserProfile } from "@/features/auth/types/auth.types";
 import { authApi } from "@/features/auth/api/auth.api";
 import {
   clearSession,
@@ -15,6 +15,8 @@ interface AuthContextValue {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<UserProfile>;
+  /** Adopt an auth result obtained elsewhere (e.g. accepting a ring-holder invite). */
+  applySession: (result: AuthResult) => void;
   logout: () => void;
 }
 
@@ -52,6 +54,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return result.user;
   }, []);
 
+  const applySession = useCallback((result: AuthResult) => {
+    saveSession(result);
+    setUser(result.user);
+  }, []);
+
   const logout = useCallback(() => {
     clearSession();
     setUser(null);
@@ -59,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated: user !== null, isLoading, login, logout }}
+      value={{ user, isAuthenticated: user !== null, isLoading, login, applySession, logout }}
     >
       {children}
     </AuthContext.Provider>

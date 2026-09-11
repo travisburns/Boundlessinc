@@ -78,15 +78,18 @@ export function RingAdminView() {
             </li>
           )}
           {rings.map((r) => (
-            <li key={r.id} className="flex flex-wrap items-center gap-4 rounded-[var(--radius)] border border-[var(--color-line)] bg-[var(--color-surface)] p-4">
-              <span className="h-9 w-9 shrink-0 rounded-full border" style={{ borderColor: r.accentColor || "#666", background: `${r.accentColor || "#666"}22` }} aria-hidden />
-              <div className="min-w-0 flex-1">
-                <p className="font-medium text-[var(--color-text)]">{r.name}</p>
-                <p className="truncate text-xs text-[var(--color-text-faint)]">{r.domain} · {r.holderName} · codes {r.codePrefix}-####</p>
+            <li key={r.id} className="rounded-[var(--radius)] border border-[var(--color-line)] bg-[var(--color-surface)] p-4">
+              <div className="flex flex-wrap items-center gap-4">
+                <span className="h-9 w-9 shrink-0 rounded-full border" style={{ borderColor: r.accentColor || "#666", background: `${r.accentColor || "#666"}22` }} aria-hidden />
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-[var(--color-text)]">{r.name}</p>
+                  <p className="truncate text-xs text-[var(--color-text-faint)]">{r.domain} · codes {r.codePrefix}-####</p>
+                </div>
+                <Button size="sm" variant="outline" onClick={() => setAssignFor(r)}>+ Assignment</Button>
+                <EditButton ringId={r.id} onLoad={setEditing} />
+                <Link href={`/ring/${r.slug}`} className="text-sm text-[var(--color-gold)] hover:underline">Open →</Link>
               </div>
-              <Button size="sm" variant="outline" onClick={() => setAssignFor(r)}>+ Assignment</Button>
-              <EditButton ringId={r.id} onLoad={setEditing} />
-              <Link href={`/ring/${r.slug}`} className="text-sm text-[var(--color-gold)] hover:underline">Open →</Link>
+              <HolderCell ring={r} onChanged={load} />
             </li>
           ))}
         </ul>
@@ -126,6 +129,106 @@ function Heading() {
     </div>
   );
 }
+
+function HolderCell({ ring, onChanged }: { ring: RingSummary; onChanged: () => void }) {
+  const [inviting, setInviting] = useState(false);
+  const [f, setF] = useState({ firstName: "", lastName: "", email: "" });
+  const [created, setCreated] = useState<{ code: string } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const held = ring.holderName && ring.holderName !== "Unassigned";
+
+  const link = created && typeof window !== "undefined"
+    ? `${window.location.origin}/ring-invite/${encodeURIComponent(created.code)}`
+    : "";
+
+  async function holdMyself() {
+    setBusy(true);
+    try {
+      await workApi.rings.setHolder(ring.id, {});
+      onChanged();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function clearHolder() {
+    setBusy(true);
+    try {
+      await workApi.rings.setHolder(ring.id, { clear: true });
+      onChanged();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function invite(e: React.FormEvent) {
+    e.preventDefault();
+    if (!f.firstName || !f.lastName || !f.email) return;
+    setBusy(true);
+    try {
+      const res = await workApi.rings.inviteHolder(ring.id, f);
+      setCreated({ code: res.code });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function copy(v: string) {
+    try {
+      await navigator.clipboard.writeText(v);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* clipboard unavailable */
+    }
+  }
+
+  if (held) {
+    return (
+      <p className="mt-3 border-t border-[var(--color-line)] pt-3 text-xs text-[var(--color-text-muted)]">
+        Holder: <span className="text-[var(--color-text)]">{ring.holderName}</span>
+        <button onClick={clearHolder} disabled={busy} className="ml-3 text-[var(--color-text-faint)] hover:text-[var(--color-danger)]">Clear</button>
+      </p>
+    );
+  }
+
+  if (created) {
+    return (
+      <div className="mt-3 border-t border-[var(--color-line)] pt-3">
+        <p className="text-xs text-[var(--color-text-muted)]">Invitation created for {f.email} — send this code:</p>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <code className="rounded-lg border border-[var(--color-line)] bg-[var(--color-void)]/40 px-3 py-1.5 font-mono tracking-[0.15em] text-[var(--color-text)]">{created.code}</code>
+          <Button size="sm" variant="outline" onClick={() => copy(created.code)}>Copy code</Button>
+          <Button size="sm" variant="outline" onClick={() => copy(link)}>{copied ? "Copied!" : "Copy link"}</Button>
+          <Button size="sm" variant="ghost" onClick={() => { setCreated(null); setInviting(false); setF({ firstName: "", lastName: "", email: "" }); }}>Done</Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-3 border-t border-[var(--color-line)] pt-3">
+      {!inviting ? (
+        <p className="text-xs text-[var(--color-text-faint)]">
+          Unassigned
+          <button onClick={holdMyself} disabled={busy} className="ml-3 text-[var(--color-gold)] hover:underline">Hold it myself</button>
+          <button onClick={() => setInviting(true)} className="ml-3 text-[var(--color-gold)] hover:underline">Invite someone</button>
+        </p>
+      ) : (
+        <form onSubmit={invite} className="flex flex-wrap items-end gap-2">
+          <input value={f.firstName} onChange={(e) => setF({ ...f, firstName: e.target.value })} placeholder="First" className={holderInput} />
+          <input value={f.lastName} onChange={(e) => setF({ ...f, lastName: e.target.value })} placeholder="Last" className={holderInput} />
+          <input value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} type="email" placeholder="Email" className={holderInput + " w-52"} />
+          <Button size="sm" type="submit" disabled={busy || !f.firstName || !f.lastName || !f.email}>{busy ? "…" : "Send invite"}</Button>
+          <Button size="sm" type="button" variant="ghost" onClick={() => setInviting(false)}>Cancel</Button>
+        </form>
+      )}
+    </div>
+  );
+}
+
+const holderInput = "h-9 w-28 rounded-lg border border-[var(--color-line)] bg-[var(--color-void)]/40 px-3 text-sm text-[var(--color-text)] outline-none focus:border-[var(--color-gold)] placeholder:text-[var(--color-text-faint)]";
 
 function RingForm({ initial, onCancel, onSaved }: { initial: Ring | null; onCancel: () => void; onSaved: () => void }) {
   const isEdit = initial !== null;

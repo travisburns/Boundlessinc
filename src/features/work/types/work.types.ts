@@ -107,6 +107,25 @@ export interface RingEvent {
   detail?: string | null;
 }
 
+export interface RingHolderInviteCreated {
+  code: string;
+  ringName: string;
+  ringSlug: string;
+  email: string;
+  expiresAtUtc: string;
+}
+
+export interface RingHolderInvite {
+  ringName: string;
+  ringSlug: string;
+  disciplines?: string | null;
+  accentColor?: string | null;
+  firstName: string;
+  lastName: string;
+  email: string;
+  status: "Pending" | "Accepted" | "Revoked";
+}
+
 export type RingActivityKind = "General" | "FileUpload" | "Update" | "Comment" | "Draft" | "Status";
 
 export interface RingActivity {

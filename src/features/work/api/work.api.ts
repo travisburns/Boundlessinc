@@ -1,5 +1,6 @@
 import { api } from "@/lib/api/client";
 import { getToken } from "@/lib/auth/session";
+import type { AuthResult } from "@/features/auth/types/auth.types";
 import type {
   Assignment,
   AssignmentInput,
@@ -8,6 +9,8 @@ import type {
   Ring,
   RingActivity,
   RingEvent,
+  RingHolderInvite,
+  RingHolderInviteCreated,
   RingInput,
   RingSummary,
 } from "@/features/work/types/work.types";
@@ -32,6 +35,16 @@ export const workApi = {
       api.post<Assignment>(`/api/rings/${ringId}/assignments`, { token: token(), json: body }),
     events: (ringId: string) => api.get<RingEvent[]>(`/api/rings/${ringId}/events`, authed()),
     activity: (ringId: string) => api.get<RingActivity[]>(`/api/rings/${ringId}/activity`, authed()),
+    inviteHolder: (ringId: string, body: { firstName: string; lastName: string; email: string }) =>
+      api.post<RingHolderInviteCreated>(`/api/rings/${ringId}/holder/invite`, { token: token(), json: body }),
+    setHolder: (ringId: string, body: { email?: string; clear?: boolean }) =>
+      api.post<Ring>(`/api/rings/${ringId}/holder`, { token: token(), json: body }),
+  },
+  /** Public: ring-holder onboarding. */
+  ringInvite: {
+    get: (code: string) => api.get<RingHolderInvite>(`/api/ring-invite/${encodeURIComponent(code)}`),
+    accept: (code: string, body: { password: string; firstName?: string; lastName?: string }) =>
+      api.post<AuthResult>(`/api/ring-invite/${encodeURIComponent(code)}/accept`, { json: body }),
   },
   assignments: {
     get: (id: string) => api.get<Assignment>(`/api/assignments/${id}`, authed()),
