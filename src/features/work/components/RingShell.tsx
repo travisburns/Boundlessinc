@@ -108,7 +108,12 @@ export function RingShell({
           <nav className="space-y-1 px-3">
             {NAV.map(({ label, key, Icon }) => {
               const isActive = key === active;
-              const href = key === "assignments" ? `/ring/${ring.slug}` : `/ring/${ring.slug}#${key}`;
+              const href =
+                key === "assignments"
+                  ? `/ring/${ring.slug}`
+                  : key === "files" || key === "submit"
+                    ? `/ring/${ring.slug}/files`
+                    : `/ring/${ring.slug}#${key}`;
               return (
                 <Link
                   key={key}
