@@ -36,6 +36,8 @@ export const workApi = {
     createAssignment: (ringId: string, body: AssignmentInput) =>
       api.post<Assignment>(`/api/rings/${ringId}/assignments`, { token: token(), json: body }),
     events: (ringId: string) => api.get<RingEvent[]>(`/api/rings/${ringId}/events`, authed()),
+    createEvent: (ringId: string, body: { title: string; date: string; timeLabel?: string; detail?: string }) =>
+      api.post<RingEvent>(`/api/rings/${ringId}/events`, { token: token(), json: body }),
     activity: (ringId: string) => api.get<RingActivity[]>(`/api/rings/${ringId}/activity`, authed()),
     inviteHolder: (ringId: string, body: { firstName: string; lastName: string; email: string }) =>
       api.post<RingHolderInviteCreated>(`/api/rings/${ringId}/holder/invite`, { token: token(), json: body }),

@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Wordmark } from "@/components/shared/Wordmark";
 import { RingEmblem } from "@/features/work/components/RingEmblem";
 import {
@@ -27,6 +29,29 @@ const TOP_TABS = [
   { label: "Messages", key: "messages" },
 ];
 
+function navHref(slug: string, key: string): string {
+  switch (key) {
+    case "assignments": return `/ring/${slug}`;
+    case "calendar": return `/ring/${slug}/calendar`;
+    case "files":
+    case "submit": return `/ring/${slug}/files`;
+    case "references": return `/ring/${slug}/references`;
+    case "guidelines": return `/ring/${slug}/guidelines`;
+    case "messages": return `/ring/${slug}/messages`;
+    default: return `/ring/${slug}`;
+  }
+}
+
+function topTabHref(slug: string, key: string): string {
+  switch (key) {
+    case "work": return `/ring/${slug}`;
+    case "calendar": return `/ring/${slug}/calendar`;
+    case "resources": return `/ring/${slug}/references`;
+    case "messages": return `/ring/${slug}/messages`;
+    default: return `/ring/${slug}`;
+  }
+}
+
 /** Bespoke chrome for a ring's workspace: full-width top bar + left identity rail. */
 export function RingShell({
   ring,
@@ -38,7 +63,15 @@ export function RingShell({
   children: React.ReactNode;
 }) {
   const { user, logout } = useAuth();
+  const router = useRouter();
+  const [q, setQ] = useState("");
   const accent = ring.accentColor || "#C2410C";
+
+  function onSearch(e: React.FormEvent) {
+    e.preventDefault();
+    const term = q.trim();
+    router.push(term ? `/ring/${ring.slug}?q=${encodeURIComponent(term)}` : `/ring/${ring.slug}`);
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-[var(--color-ink)] text-[var(--color-text)]">
@@ -51,7 +84,7 @@ export function RingShell({
           {TOP_TABS.map((t) => (
             <Link
               key={t.key}
-              href={t.key === "work" ? `/ring/${ring.slug}` : `/ring/${ring.slug}#${t.key}`}
+              href={topTabHref(ring.slug, t.key)}
               className={
                 "border-b-2 pb-[3px] text-sm transition-colors " +
                 (t.key === "work"
@@ -66,10 +99,15 @@ export function RingShell({
         </nav>
 
         <div className="ml-auto flex items-center gap-4">
-          <div className="hidden items-center gap-2 rounded-full border border-[var(--color-line)] bg-[var(--color-void)]/40 px-3.5 py-2 lg:flex">
+          <form onSubmit={onSearch} className="hidden items-center gap-2 rounded-full border border-[var(--color-line)] bg-[var(--color-void)]/40 px-3.5 py-2 lg:flex">
             <IconSearch size={16} className="text-[var(--color-text-faint)]" />
-            <input placeholder="Search…" className="w-40 bg-transparent text-sm text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-faint)]" />
-          </div>
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search assignments…"
+              className="w-44 bg-transparent text-sm text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-faint)]"
+            />
+          </form>
           <span className="relative">
             <IconBell size={20} className="text-[var(--color-text-muted)]" />
             <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full" style={{ background: accent }} aria-hidden />
@@ -108,12 +146,7 @@ export function RingShell({
           <nav className="space-y-1 px-3">
             {NAV.map(({ label, key, Icon }) => {
               const isActive = key === active;
-              const href =
-                key === "assignments"
-                  ? `/ring/${ring.slug}`
-                  : key === "files" || key === "submit"
-                    ? `/ring/${ring.slug}/files`
-                    : `/ring/${ring.slug}#${key}`;
+              const href = navHref(ring.slug, key);
               return (
                 <Link
                   key={key}
