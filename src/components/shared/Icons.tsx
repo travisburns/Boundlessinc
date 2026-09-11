@@ -27,6 +27,19 @@ export const IconHourglass = (p: IconProps) => (
   </Svg>
 );
 
+export const IconKey = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="8" cy="8" r="4" />
+    <path d="M11 11l8 8M17 17l1.5-1.5M15 19l1.5-1.5" />
+  </Svg>
+);
+
+export const IconCheck = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4 12.5 9 17.5 20 6.5" />
+  </Svg>
+);
+
 export const IconCompass = (p: IconProps) => (
   <Svg {...p}>
     <circle cx="12" cy="12" r="9" />
