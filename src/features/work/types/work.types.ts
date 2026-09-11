@@ -99,6 +99,23 @@ export interface Assignment {
   updates: AssignmentUpdate[];
 }
 
+export interface RingEvent {
+  id: string;
+  title: string;
+  date: string;
+  timeLabel?: string | null;
+  detail?: string | null;
+}
+
+export type RingActivityKind = "General" | "FileUpload" | "Update" | "Comment" | "Draft" | "Status";
+
+export interface RingActivity {
+  id: string;
+  kind: RingActivityKind;
+  text: string;
+  createdAtUtc: string;
+}
+
 /** Payload for creating/updating an assignment. */
 export interface AssignmentInput {
   title: string;

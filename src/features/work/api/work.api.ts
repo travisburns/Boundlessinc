@@ -6,6 +6,8 @@ import type {
   AssignmentStatus,
   AssignmentSummary,
   Ring,
+  RingActivity,
+  RingEvent,
   RingInput,
   RingSummary,
 } from "@/features/work/types/work.types";
@@ -28,6 +30,8 @@ export const workApi = {
       ),
     createAssignment: (ringId: string, body: AssignmentInput) =>
       api.post<Assignment>(`/api/rings/${ringId}/assignments`, { token: token(), json: body }),
+    events: (ringId: string) => api.get<RingEvent[]>(`/api/rings/${ringId}/events`, authed()),
+    activity: (ringId: string) => api.get<RingActivity[]>(`/api/rings/${ringId}/activity`, authed()),
   },
   assignments: {
     get: (id: string) => api.get<Assignment>(`/api/assignments/${id}`, authed()),
