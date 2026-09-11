@@ -1,8 +1,19 @@
+export type OnboardingStepKind =
+  | "Generic"
+  | "PersonalInfo"
+  | "EmergencyContact"
+  | "TaxPayroll"
+  | "DirectDeposit"
+  | "PolicyAcknowledgement"
+  | "ITAccess"
+  | "Availability";
+
 export interface OnboardingTemplateStep {
   order: number;
   name: string;
   description?: string | null;
   isRequired: boolean;
+  kind: OnboardingStepKind;
 }
 
 export interface OnboardingTemplate {
@@ -23,6 +34,8 @@ export interface OnboardingEmployeeStep {
   isRequired: boolean;
   isCompleted: boolean;
   completedAtUtc?: string | null;
+  kind: OnboardingStepKind;
+  responseJson?: string | null;
 }
 
 export interface OnboardingProcess {

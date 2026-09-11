@@ -17,10 +17,10 @@ export const inviteApi = {
       json: { firstName, lastName },
     }),
 
-  setStep: (code: string, stepId: string, completed: boolean) =>
+  setStep: (code: string, stepId: string, completed: boolean, responseJson?: string) =>
     api.patch<InviteDetail>(
       `${publicBase}/${encodeURIComponent(code)}/steps/${stepId}`,
-      { json: { completed } },
+      { json: { completed, responseJson } },
     ),
 };
 

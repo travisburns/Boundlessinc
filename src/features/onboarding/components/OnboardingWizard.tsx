@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
@@ -9,6 +9,7 @@ import { MicroColumn } from "@/components/shared/MicroColumn";
 import { IconCheck } from "@/components/shared/Icons";
 import { ApiError } from "@/lib/api/client";
 import { inviteApi } from "@/features/onboarding/api/invite.api";
+import { StepForm } from "@/features/onboarding/components/StepForm";
 import type { InviteDetail } from "@/features/onboarding/types/invite.types";
 import type { OnboardingEmployeeStep } from "@/features/onboarding/types/onboarding.types";
 
@@ -25,6 +26,7 @@ export function OnboardingWizard() {
   const [busy, setBusy] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [activeStepId, setActiveStepId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     if (!code) {
@@ -56,6 +58,7 @@ export function OnboardingWizard() {
     setBusy(true);
     try {
       const invite = await inviteApi.start(code, firstName, lastName);
+      setActiveStepId(null);
       setState({ kind: "ready", invite });
     } catch (err) {
       setState({
@@ -70,13 +73,15 @@ export function OnboardingWizard() {
     }
   }
 
-  async function onToggleStep(step: OnboardingEmployeeStep) {
+  async function onSubmitStep(step: OnboardingEmployeeStep, responseJson: string) {
     setBusy(true);
     try {
-      const invite = await inviteApi.setStep(code, step.id, !step.isCompleted);
+      const invite = await inviteApi.setStep(code, step.id, true, responseJson);
+      // Advance to the next still-incomplete step.
+      const next = invite.process?.steps.find((s) => !s.isCompleted);
+      setActiveStepId(next ? next.id : null);
       setState({ kind: "ready", invite });
     } catch {
-      // Reload authoritative state on failure.
       await load();
     } finally {
       setBusy(false);
@@ -87,10 +92,10 @@ export function OnboardingWizard() {
     <section className="bg-cosmos relative min-h-[70vh] overflow-hidden">
       <Container className="relative py-16 sm:py-20">
         <MicroColumn
-          className="absolute left-5 top-16 hidden sm:block"
+          className="absolute left-5 top-16 hidden lg:block"
           lines={["ONE", "ACCOUNT", "MANY WORLDS"]}
         />
-        <div className="mx-auto max-w-2xl">
+        <div className="mx-auto max-w-3xl">
           {state.kind === "loading" && <Loading />}
           {state.kind === "error" && <ErrorPanel message={state.message} onRetry={load} />}
           {state.kind === "ready" && (
@@ -102,7 +107,9 @@ export function OnboardingWizard() {
               setLastName={setLastName}
               busy={busy}
               onStart={onStart}
-              onToggleStep={onToggleStep}
+              onSubmitStep={onSubmitStep}
+              activeStepId={activeStepId}
+              setActiveStepId={setActiveStepId}
             />
           )}
         </div>
@@ -139,7 +146,9 @@ function ReadyPanel({
   setLastName,
   busy,
   onStart,
-  onToggleStep,
+  onSubmitStep,
+  activeStepId,
+  setActiveStepId,
 }: {
   invite: InviteDetail;
   firstName: string;
@@ -148,8 +157,23 @@ function ReadyPanel({
   setLastName: (v: string) => void;
   busy: boolean;
   onStart: () => void;
-  onToggleStep: (step: OnboardingEmployeeStep) => void;
+  onSubmitStep: (step: OnboardingEmployeeStep, responseJson: string) => void;
+  activeStepId: string | null;
+  setActiveStepId: (id: string | null) => void;
 }) {
+  const process = invite.process;
+  const finished = invite.status === "Completed" || process?.status === "Completed";
+
+  const header = (
+    <div className="text-center">
+      <p className="u-micro text-[var(--color-gold)]">{invite.companyName}</p>
+      <h1 className="mt-3 font-display text-3xl tracking-[0.03em] text-[var(--color-text)] sm:text-4xl">
+        {finished ? "YOU'RE ALL SET" : "WELCOME ABOARD"}
+      </h1>
+      <p className="mt-3 font-serif text-lg text-[var(--color-text-muted)]">{invite.templateName}</p>
+    </div>
+  );
+
   if (invite.status === "Expired" || invite.status === "Revoked") {
     return (
       <div className="rounded-[var(--radius)] border border-[var(--color-line)] bg-[var(--color-surface)] p-10 text-center">
@@ -165,22 +189,6 @@ function ReadyPanel({
       </div>
     );
   }
-
-  const process = invite.process;
-  const finished = invite.status === "Completed" || process?.status === "Completed";
-
-  // Header shared across states.
-  const header = (
-    <div className="text-center">
-      <p className="u-micro text-[var(--color-gold)]">{invite.companyName}</p>
-      <h1 className="mt-3 font-display text-3xl tracking-[0.03em] text-[var(--color-text)] sm:text-4xl">
-        {finished ? "YOU'RE ALL SET" : "WELCOME ABOARD"}
-      </h1>
-      <p className="mt-3 font-serif text-lg text-[var(--color-text-muted)]">
-        {invite.templateName}
-      </p>
-    </div>
-  );
 
   if (finished) {
     return (
@@ -205,7 +213,7 @@ function ReadyPanel({
     );
   }
 
-  // Not started yet — confirm details and begin.
+  // Not started — confirm details and begin.
   if (!process) {
     return (
       <div>
@@ -252,57 +260,105 @@ function ReadyPanel({
     );
   }
 
-  // In progress — step checklist.
+  // In progress — real step-by-step wizard.
+  return (
+    <InProgress
+      invite={invite}
+      process={process}
+      busy={busy}
+      onSubmitStep={onSubmitStep}
+      activeStepId={activeStepId}
+      setActiveStepId={setActiveStepId}
+      header={header}
+    />
+  );
+}
+
+function InProgress({
+  process,
+  busy,
+  onSubmitStep,
+  activeStepId,
+  setActiveStepId,
+  header,
+}: {
+  invite: InviteDetail;
+  process: NonNullable<InviteDetail["process"]>;
+  busy: boolean;
+  onSubmitStep: (step: OnboardingEmployeeStep, responseJson: string) => void;
+  activeStepId: string | null;
+  setActiveStepId: (id: string | null) => void;
+  header: React.ReactNode;
+}) {
+  const steps = process.steps;
+  const activeStep = useMemo(() => {
+    if (activeStepId) {
+      const found = steps.find((s) => s.id === activeStepId);
+      if (found) return found;
+    }
+    return steps.find((s) => !s.isCompleted) ?? steps[steps.length - 1];
+  }, [steps, activeStepId]);
+
+  const activeIndex = steps.findIndex((s) => s.id === activeStep.id);
+  const prevStep = activeIndex > 0 ? steps[activeIndex - 1] : undefined;
+
   return (
     <div>
       {header}
-      <div className="mt-8 rounded-[var(--radius)] border border-[var(--color-line)] bg-[var(--color-surface)] p-8">
-        <div className="mb-6">
-          <ProgressBar value={process.completedSteps} total={process.totalSteps} />
-        </div>
-        <ul className="flex flex-col gap-2.5">
-          {process.steps.map((step) => (
-            <li key={step.id}>
+
+      <div className="mt-8">
+        <ProgressBar value={process.completedSteps} total={process.totalSteps} />
+      </div>
+
+      {/* Step rail */}
+      <ol className="mt-5 flex flex-wrap gap-2">
+        {steps.map((s, i) => {
+          const isActive = s.id === activeStep.id;
+          return (
+            <li key={s.id}>
               <button
                 type="button"
-                disabled={busy}
-                onClick={() => onToggleStep(step)}
-                className="flex w-full items-center gap-4 rounded-lg border border-[var(--color-line)] bg-[var(--color-void)]/30 px-4 py-3.5 text-left transition-colors hover:border-[var(--color-gold)]/50 disabled:opacity-60"
+                onClick={() => setActiveStepId(s.id)}
+                className={
+                  "flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition-colors " +
+                  (isActive
+                    ? "border-[var(--color-gold)] text-[var(--color-gold)]"
+                    : s.isCompleted
+                      ? "border-[var(--color-line)] text-[var(--color-text-muted)] hover:border-[var(--color-gold)]/50"
+                      : "border-[var(--color-line)] text-[var(--color-text-faint)] hover:border-[var(--color-gold)]/50")
+                }
               >
                 <span
                   className={
-                    "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border " +
-                    (step.isCompleted
+                    "flex h-4 w-4 items-center justify-center rounded-full border text-[10px] " +
+                    (s.isCompleted
                       ? "border-[var(--color-gold)] bg-[var(--color-gold)] text-[var(--color-void)]"
-                      : "border-[var(--color-line)] text-transparent")
+                      : "border-current")
                   }
                 >
-                  <IconCheck size={14} />
+                  {s.isCompleted ? <IconCheck size={10} /> : i + 1}
                 </span>
-                <span className="flex-1">
-                  <span
-                    className={
-                      "block text-sm " +
-                      (step.isCompleted
-                        ? "text-[var(--color-text-muted)] line-through"
-                        : "text-[var(--color-text)]")
-                    }
-                  >
-                    {step.name}
-                  </span>
-                </span>
-                {!step.isRequired && (
-                  <span className="u-micro text-[var(--color-text-faint)]">Optional</span>
-                )}
+                <span className="hidden sm:inline">{s.name}</span>
               </button>
             </li>
-          ))}
-        </ul>
-        <p className="mt-6 text-center text-xs text-[var(--color-text-faint)]">
-          Complete every required step to finish onboarding. You can leave and return with your
-          code at any time.
-        </p>
+          );
+        })}
+      </ol>
+
+      <div className="mt-6">
+        <StepForm
+          key={activeStep.id}
+          step={activeStep}
+          busy={busy}
+          onSubmit={(json) => onSubmitStep(activeStep, json)}
+          canGoBack={!!prevStep}
+          onBack={() => prevStep && setActiveStepId(prevStep.id)}
+        />
       </div>
+
+      <p className="mt-6 text-center text-xs text-[var(--color-text-faint)]">
+        Your progress is saved as you go — you can leave and return with your code at any time.
+      </p>
     </div>
   );
 }
