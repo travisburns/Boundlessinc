@@ -26,6 +26,8 @@ export const workApi = {
     get: (slug: string) => api.get<Ring>(`/api/rings/${encodeURIComponent(slug)}`, authed()),
     /** The ring held by the current user (204 → null). */
     mine: () => api.get<Ring | undefined>("/api/rings/mine", authed()),
+    /** All rings held by the current user (a person may hold several). */
+    held: () => api.get<RingSummary[]>("/api/rings/held", authed()),
     create: (body: RingInput) => api.post<Ring>("/api/rings", { token: token(), json: body }),
     update: (id: string, body: RingInput) => api.put<Ring>(`/api/rings/${id}`, { token: token(), json: body }),
     assignments: (ringId: string, status?: AssignmentStatus) =>

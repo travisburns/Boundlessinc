@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Wordmark } from "@/components/shared/Wordmark";
+import { workApi } from "@/features/work/api/work.api";
+import type { RingSummary } from "@/features/work/types/work.types";
 import { RingEmblem } from "@/features/work/components/RingEmblem";
 import {
   IconClipboard, IconCalendar, IconFolder, IconBook, IconRing, IconUpload, IconChat,
@@ -65,7 +67,12 @@ export function RingShell({
   const { user, logout } = useAuth();
   const router = useRouter();
   const [q, setQ] = useState("");
+  const [heldRings, setHeldRings] = useState<RingSummary[]>([]);
   const accent = ring.accentColor || "#C2410C";
+
+  useEffect(() => {
+    workApi.rings.held().then(setHeldRings).catch(() => setHeldRings([]));
+  }, []);
 
   function onSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -194,7 +201,33 @@ export function RingShell({
           </div>
         </aside>
 
-        <main className="min-w-0 flex-1 overflow-x-hidden p-6 sm:p-8">{children}</main>
+        <main className="min-w-0 flex-1 overflow-x-hidden">
+          {heldRings.length > 1 && (
+            <div className="flex items-center gap-2 overflow-x-auto border-b border-[var(--color-line)] px-6 py-3">
+              <span className="shrink-0 text-[10px] uppercase tracking-[0.2em] text-[var(--color-text-faint)]">Your rings</span>
+              {heldRings.map((r) => {
+                const current = r.slug === ring.slug;
+                return (
+                  <Link
+                    key={r.id}
+                    href={`/ring/${r.slug}`}
+                    className={
+                      "flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition-colors " +
+                      (current
+                        ? "text-[var(--color-text)]"
+                        : "border-[var(--color-line)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]")
+                    }
+                    style={current ? { borderColor: r.accentColor || accent } : undefined}
+                  >
+                    <span className="h-2 w-2 rounded-full" style={{ background: r.accentColor || "#666" }} aria-hidden />
+                    {r.name}
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+          <div className="p-6 sm:p-8">{children}</div>
+        </main>
       </div>
     </div>
   );
