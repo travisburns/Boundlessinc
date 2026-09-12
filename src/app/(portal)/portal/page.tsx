@@ -37,7 +37,27 @@ export default function PortalDashboard() {
           : "Shared enterprise services across the holding company."}
       </p>
 
-      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <Link
+        href="/first-horizon"
+        className="mt-8 flex items-center gap-4 rounded-[var(--radius)] border border-[var(--color-gold)]/30 bg-gradient-to-r from-[var(--color-gold)]/10 to-transparent p-5 transition-colors hover:border-[var(--color-gold)]/60"
+      >
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--color-gold)]/40 text-[var(--color-gold)]">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+        <span className="min-w-0">
+          <span className="block font-[family-name:var(--font-cinzel)] text-sm uppercase tracking-[0.18em] text-[var(--color-text)]">
+            The First Horizon · Core Onboarding
+          </span>
+          <span className="mt-0.5 block text-xs text-[var(--color-text-muted)]">
+            Read and sign the Boundless onboarding document.
+          </span>
+        </span>
+        <span className="ml-auto shrink-0 text-xs uppercase tracking-wider text-[var(--color-gold)]">Open →</span>
+      </Link>
+
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {sections.map((s) => {
           const live = liveModules.has(s.href);
           return (
