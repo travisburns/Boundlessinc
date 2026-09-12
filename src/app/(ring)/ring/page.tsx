@@ -16,9 +16,9 @@ export default function RingIndexPage() {
     let cancelled = false;
     (async () => {
       try {
-        const mine = await workApi.rings.mine();
-        if (!cancelled && mine) {
-          router.replace(`/ring/${mine.slug}`);
+        const held = await workApi.rings.held();
+        if (!cancelled && held.length > 0) {
+          router.replace(`/ring/${held[0].slug}`);
           return;
         }
       } catch {
